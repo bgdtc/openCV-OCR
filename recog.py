@@ -1,10 +1,13 @@
+from PIL.Image import Image
 import numpy as np
 import cv2
 import imutils
 import sys
-#import pytesseract   
+import pytesseract   
 import pandas as pd
 import time
+import imageio
+from skimage.segmentation import chan_vese
 
 
 video_record = cv2.VideoCapture(0)
@@ -21,13 +24,13 @@ while True:
     # gray = cv2.bilateralFilter(gray, 11, 17, 17)
     # gray = cv2.Canny(gray, 170, 200)
     blur = cv2.GaussianBlur(gray, (5,5), 0)
-    ret, tresh_img = cv2.threshold(blur, 91,255,cv2.THRESH_BINARY)
-    contours = cv2.findContours(tresh_img, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+    ret, tresh_img = cv2.threshold(blur, 140,255,0)
+    contours = cv2.findContours(tresh_img, cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)[-2]
     for c in contours:
-        cv2.drawContours(frame, [c], -1, (0,255,0), 3)
+        cv2.drawContours(frame, [c], -1, (0,255,0), 1)
         
    
-    cv2.imshow("Video",frame)
+    # cv2.imshow("Video",frame)
     if cv2.waitKey(1) & 0xFF == ord('s'):
 
          check, frame = video_record.read()
@@ -51,8 +54,6 @@ while True:
          break
 
     cv2.imshow('video', frame)
-
-
 video_record.release()
 cv2.destroyAllWindows()
   
