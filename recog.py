@@ -1,13 +1,8 @@
-from PIL.Image import Image
 import numpy as np
 import cv2
-import imutils
-import sys
 import pytesseract   
 import pandas as pd
 import time
-import imageio
-from skimage.segmentation import chan_vese
 
 
 video_record = cv2.VideoCapture(0)
