@@ -16,13 +16,24 @@ while True:
     ret, frame = video_record.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # gray = imutils.resize(gray, width=500)
-    # gray = cv2.bilateralFilter(gray, 11, 17, 17)
+    gray = cv2.bilateralFilter(gray, 11, 17, 17)
     # gray = cv2.Canny(gray, 170, 200)
-    blur = cv2.GaussianBlur(gray, (5,5), 0)
-    ret, tresh_img = cv2.threshold(blur, 140,255,0)
-    contours = cv2.findContours(tresh_img, cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)[-2]
+    # RAJOUTÉ RAJOUTÉ RAJOUTÉ RAJOUTÉ
+    gray = cv2.medianBlur(gray, 5)
+    gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    kernel = np.ones((5,5),np.uint8)
+    gray = cv2.dilate(gray, kernel, iterations=1)
+    gray = cv2.erode(gray, kernel, iterations=1)
+    gray = cv2.morphologyEx(gray, cv2.MORPH_OPEN, kernel)
+    #  FIN DU RAJOUT FIN DU RAJOUT 
+    gray = cv2.Canny(gray, 30, 200)
+    # blur = cv2.GaussianBlur(gray, (5,5), 0)
+    # ret, tresh_img = cv2.threshold(blur, 140,255,0)
+    print(pytesseract.image_to_string(frame))
+    contours = cv2.findContours(gray, cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)[-2]
     for c in contours:
         cv2.drawContours(frame, [c], -1, (0,255,0), 1)
+        
         
    
     # cv2.imshow("Video",frame)
@@ -48,8 +59,9 @@ while True:
          cv2.destroyAllWindows
          break
 
-    cv2.imshow('video', frame)
+    cv2.imshow('video', gray)
 video_record.release()
+
 cv2.destroyAllWindows()
   
 # video_record.release()
